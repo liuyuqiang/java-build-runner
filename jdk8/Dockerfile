@@ -55,9 +55,25 @@ RUN set -o errexit -o nounset \
     && ln --symbolic "${GRADLE_HOME}/bin/gradle" /usr/bin/gradle \
     \
     && echo "Testing Gradle installation" \
-    && gradle --version \
+    && gradle --version
+
+ENV MAVEN_VERSION 3.8.5
+RUN set -o errexit -o nounset \
+    && echo "Downloading Gradle" \
+    && wget --no-verbose "http://repo1.maven.org/maven2/org/apache/maven/apache-maven/${MAVEN_VERSION}/apache-maven-${MAVEN_VERSION}-bin.tar.gz" \
+    \
+    && echo "Installing maven" \
+    && tar xzvf apache-maven-${MAVEN_VERSION}-bin.tar.gz \
+    && mv apache-maven-${MAVEN_VERSION} /opt/ \
+    && ln --symbolic /opt/apache-maven-${MAVEN_VERSION}/bin/mvn /bin/mvn \
+    && ln --symbolic /opt/apache-maven-${MAVEN_VERSION}/bin/mvnDebug /bin/mvnDebug \
+    \
+    && echo "Testing Maven installation" \
+    && mvn -version
 
 RUN set -o errexit -o nounset \
     && apt-get update \
     && apt-get install --yes --no-install-recommends \
-    jq
+    jq \
+
+WORKDIR /home/
